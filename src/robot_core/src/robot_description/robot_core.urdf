@@ -6,9 +6,9 @@
 
 	<xacro:property name="wheel_radius" value = ".024"/>
 	<xacro:property name="wheel_width" value = ".03"/>
-	<xacro:property name="wheel_zoff" value = ".024"/>
-	<xacro:property name="wheel_ygap" value = ".024"/>
-	<xacro:property name="wheel_xoff" value = ".203"/>
+	<xacro:property name="wheel_zoff" value = ".07"/>
+	<xacro:property name="wheel_ygap" value = ".018"/>
+	<xacro:property name="wheel_xoff" value = ".1015"/>
 
 	<xacro:property name="support_height" value = ".203"/>
 	<xacro:property name="support_radius" value = ".203"/>
@@ -56,8 +56,8 @@
 	    </joint>
 	</xacro:macro>
 
-	<xacro:wheel prefix="frontLeft" x_reflect="1" y_reflect="0"/>
-	<xacro:wheel prefix="frontRight" x_reflect="0" y_reflect="1"/>
-	<xacro:wheel prefix="backLeft" x_reflect="0" y_reflect="-1"/>
-	<xacro:wheel prefix="backRight" x_reflect="-1" y_reflect="0"/>
+	<xacro:wheel prefix="frontLeft" x_reflect="-1" y_reflect="-1"/>
+	<xacro:wheel prefix="frontRight" x_reflect="-1" y_reflect="1"/>
+	<xacro:wheel prefix="backLeft" x_reflect="1" y_reflect="-1"/>
+	<xacro:wheel prefix="backRight" x_reflect="1" y_reflect="1"/>
 </robot>
