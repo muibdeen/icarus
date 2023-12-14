@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 
+
+
+<!--robot intrinsics-->
 <robot name="icarus" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	
 	<!--constants to use for the robot dimensions-->
@@ -15,8 +18,10 @@
 
 	<xacro:property name="support_height" value = ".203"/>
 	<xacro:property name="support_radius" value = ".203"/>
+
+	<xacro:property name="lidar_radius" value=".03"/>
     
-	<!-- intertial property macros to be used for robot chassis and wheels-->
+	<!-- inertial property macros to be used for robot chassis and wheels-->
 	<xacro:macro name="robot_inertia" params="m w h d">
 	    <inertial>
 		    <origin xyz="0 0 0" rpy="${pi/2} 0 ${pi/2}"/>
@@ -97,5 +102,76 @@
 	<xacro:wheel prefix="frontRight" x_reflect="-1" y_reflect="1"/>
 	<xacro:wheel prefix="backLeft" x_reflect="1" y_reflect="-1"/>
 	<xacro:wheel prefix="backRight" x_reflect="1" y_reflect="1"/>
+<!--lidar intrinsics-->
+<link name="lidar_link">
+	<inertial>
+		<origin xyz="${-chassis_length/2 + 2*lidar_radius} 0 ${chassis_height/2}" rpy="0 0 0"/>
+		<mass value=".17"/>
+		<inertia ixx="0.001"  ixy="0"  ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+	</inertial>
+
+	<collision>
+		<origin xyz="${-chassis_length/2 + 2*lidar_radius} 0 ${chassis_height/2}"/>
+		<geometry>
+			<cylinder radius="${lidar_radius}" length=".06"/>
+		</geometry>
+	</collision>
+
+	<visual>
+		<origin xyz = "${-chassis_length/2 + 2*lidar_radius} 0 ${chassis_height/2}" rpy="0 0 0"/>
+		<geometry>
+			<cylinder radius="${lidar_radius}" length=".06"/>
+		</geometry>
+		<material name="Gray">
+			<color rgba="0.5 0.5 0.5 1.0"/>
+		</material>
+	</visual>
+</link>
+
+<!--create the joint that the lidar_link will be bound to with the base being the base_link-->
+<joint name="lidar_joint" type="fixed"> 
+<!--^^make joint continuous to mimic spinning lidar?-->
+	<parent link="base_link"/>
+	<child link="lidar_link"/>
+	<origin xyz="${-chassis_length/2 + lidar_radius} 0 ${chassis_height/2+.02}" rpy="0 0 0"/>
+</joint>
+
+<!--adding gazebo plugins to the sim-->
+<gazebo reference="lidar_link">
+	<sensor name="lidar" type="ray">
+		<always_on>true</always_on>
+		<visualize>true</visualize>
+		<update_rate>5</update_rate>
+		<ray>
+			<scan>
+				<horizontal>
+					<samples>8000</samples>
+					<resolution>1</resolution>
+					<!--min and max angles are in radians-->
+					<min_angle>0.0</min_angle>
+					<max_angle>6.28</max_angle>
+				</horizontal>
+			</scan>
+			<range>
+				<min>0.12</min>
+				<max>4</max>
+				<resolution>1</resolution>
+			</range>
+			<noise>
+				<type>gaussian</type>
+				<mean>0.0</mean>
+				<stddev>0.01</stddev>
+			</noise>
+		</ray>
+		<plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+			<ros>
+				<remapping>~/out:=scan</remapping>
+			</ros>
+			<output_type>sensor_msgs/LaserScan</output_type>
+			<frame_name>lidar_link</frame_name>
+		</plugin>
+	</sensor>
+</gazebo>
+
 </robot>
 
