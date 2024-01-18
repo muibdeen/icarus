@@ -21,6 +21,7 @@ if(BUILD_TESTING)
   find_package(message_filters REQUIRED)
   find_package(sensor_msgs REQUIRED)
   find_package(nav_msgs REQUIRED)
+  find_package(ros2_control)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
@@ -56,7 +57,7 @@ ament_target_dependencies(
 )
 
 install(
-	DIRECTORY src launch rviz world
+	DIRECTORY src launch rviz world controllers
 	DESTINATION share/${PROJECT_NAME}
 )
 install(

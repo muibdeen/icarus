@@ -6,7 +6,7 @@ import os
 def generate_launch_description():
     
     pkg_share = launch_ros.substitutions.FindPackageShare(package='robot_core').find('robot_core')
-    default_model_path = os.path.join(pkg_share, 'src/robot_description/robot_core.urdf')
+    default_model_path = os.path.join(pkg_share, 'src/robot_description/robot_core_ros_2_control.urdf')
     default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
     world_path=os.path.join(pkg_share, 'world/my_world.sdf')
 
