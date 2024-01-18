@@ -44,6 +44,11 @@ def generate_launch_description():
         output='screen'
     )
 
+    tf_broadcaster = launch_ros.actions.Node(
+        executable='nav_publisher',
+        name='nav'
+    )
+
     return launch.LaunchDescription([
         launch.actions.DeclareLaunchArgument(name='gui', default_value='True',
                                             description='Flag to enable joint_state_publisher_gui'),
@@ -51,9 +56,12 @@ def generate_launch_description():
                                             description='Absolute path to robot urdf file'),
         launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
                                             description='Absolute path to rviz config file'),
+        launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
+                                            description='Flag to enable use_sim_time'),
         launch.actions.ExecuteProcess(cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_path], output='screen'),        joint_state_publisher_node,
-        joint_state_publisher_gui_node,
+        #joint_state_publisher_gui_node,
         robot_state_publisher_node,
         spawn_entity,
-        rviz_node
+        rviz_node,
+        #tf_broadcaster
     ])

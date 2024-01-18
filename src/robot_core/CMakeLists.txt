@@ -13,6 +13,14 @@ find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  find_package(geometry_msgs REQUIRED)
+  find_package(rclcpp REQUIRED) 
+  find_package(tf2 REQUIRED)
+  find_package(tf2_geometry_msgs REQUIRED)
+  find_package(tf2_ros REQUIRED)
+  find_package(message_filters REQUIRED)
+  find_package(sensor_msgs REQUIRED)
+  find_package(nav_msgs REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
@@ -23,8 +31,41 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+add_executable(nav_publisher src/nav2/differential_drive2.cpp)
+ament_target_dependencies(
+  nav_publisher
+  rclcpp
+  geometry_msgs
+  rclcpp
+  tf2
+  tf2_ros
+  sensor_msgs
+  nav_msgs
+)
+
+add_executable(tf_listener src/nav2/tf_listener.cpp)
+ament_target_dependencies(
+  tf_listener
+  rclcpp
+  geometry_msgs
+  rclcpp
+  tf2
+  tf2_ros
+  sensor_msgs
+  nav_msgs
+)
+
 install(
 	DIRECTORY src launch rviz world
 	DESTINATION share/${PROJECT_NAME}
+)
+install(
+  TARGETS nav_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  TARGETS tf_listener
+  DESTINATION lib/${PROJECT_NAME}
 )
 ament_package()
