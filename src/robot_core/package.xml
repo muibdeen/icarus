@@ -23,6 +23,12 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>ros2_control</exec_depend>
+  <exec_depend>ros-foxy-gazebo-ros-pkgs</exec_depend>
+  <exec_depend>ros-foxy-gazebo-ros</exec_depend>
+  <exec_depend>ros-foxy-navigation2</exec_depend>
+  <exec_depend>ros-foxy-nav2-bringup</exec_depend>
+  <exec_depend>ros-foxy-twist-mux</exec_depend>
+
 
   <export>
     <build_type>ament_cmake</build_type>
