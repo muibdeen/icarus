@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Mechanum - Left.URDF">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.10817 -0.040063 0.025145"
+        rpy="0 0 0" />
+      <mass
+        value="0.05" />
+      <inertia
+        ixx="9.7277E-07"
+        ixy="9.1161E-08"
+        ixz="-4.1554E-08"
+        iyy="1.3023E-06"
+        iyz="-1.6094E-07"
+        izz="1.0226E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Mecanum_Roller_Link_1">
+    <inertial>
+      <origin
+        xyz="-7.0777E-16 -1.3878E-17 1.3878E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.0010431" />
+      <inertia
+        ixx="9.9676E-09"
+        ixy="-4.808E-24"
+        ixz="4.6529E-24"
+        iyy="3.7923E-08"
+        iyz="1.6544E-24"
+        izz="3.7923E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_1"
+    type="continuous">
+    <origin
+      xyz="-0.11966 -0.035473 -0.032381"
+      rpy="1.8424 0.79911 2.8513" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_1" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_2">
+    <inertial>
+      <origin
+        xyz="-7.0082828429463E-16 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957260103E-09"
+        ixy="-5.27327640502555E-24"
+        ixz="3.30872245021211E-24"
+        iyy="3.79225492604175E-08"
+        iyz="0"
+        izz="3.79225492604175E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_2"
+    type="continuous">
+    <origin
+      xyz="-0.12484 -0.025387 -0.035639"
+      rpy="0.93857 1.116 2.1762" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_2" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_3">
+    <inertial>
+      <origin
+        xyz="-7.14706072102445E-16 0 -3.46944695195361E-18"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957202997E-09"
+        ixy="-3.6189151799195E-25"
+        ixz="-1.4475660719678E-24"
+        iyy="3.7922549260132E-08"
+        iyz="2.48154183765908E-24"
+        izz="3.7922549260132E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_3"
+    type="continuous">
+    <origin
+      xyz="-0.12223 -0.015186 -0.040964"
+      rpy="-1.0812 1.262 0.81029" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_3" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_4">
+    <inertial>
+      <origin
+        xyz="-7.11236625150491E-16 -1.38777878078145E-17 3.46944695195361E-18"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957227009E-09"
+        ixy="3.36042123849667E-25"
+        ixz="1.03397576569128E-25"
+        iyy="3.7922549260252E-08"
+        iyz="-2.06795153138257E-24"
+        izz="3.7922549260252E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_4"
+    type="continuous">
+    <origin
+      xyz="-0.11304 -0.0096442 -0.045864"
+      rpy="-1.6856 1.0243 -0.30784" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_4" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_5">
+    <inertial>
+      <origin
+        xyz="-7.19910242530375E-16 6.93889390390723E-18 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.9675895724821E-09"
+        ixy="-2.06795153138257E-24"
+        ixz="-1.4475660719678E-24"
+        iyy="3.7922549260358E-08"
+        iyz="4.13590306276514E-24"
+        izz="3.7922549260358E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_5"
+    type="continuous">
+    <origin
+      xyz="-0.10157 -0.011354 -0.048046"
+      rpy="-1.2443 0.7067 -0.8985" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_5" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_6">
+    <inertial>
+      <origin
+        xyz="-7.14706072102445E-16 3.46944695195361E-18 -1.38777878078145E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957226301E-09"
+        ixy="-2.8951321439356E-24"
+        ixz="-6.37187565607254E-24"
+        iyy="3.79225492602485E-08"
+        iyz="2.49446653473022E-24"
+        izz="3.79225492602485E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_6"
+    type="continuous">
+    <origin
+      xyz="-0.093187 -0.019515 -0.04649"
+      rpy="1.9354 0.44843 -1.3982" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_6" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_7">
+    <inertial>
+      <origin
+        xyz="-7.21644966006352E-16 1.38777878078145E-17 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957190509E-09"
+        ixy="3.51551760335037E-24"
+        ixz="-2.27474668452083E-24"
+        iyy="3.79225492600695E-08"
+        iyz="2.48154183765908E-24"
+        izz="3.79225492600695E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_7.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_7.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_7"
+    type="continuous">
+    <origin
+      xyz="-0.091819 -0.030309 -0.041922"
+      rpy="1.6796 0.31308 -1.9052" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_7" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_8">
+    <inertial>
+      <origin
+        xyz="-7.21644966006352E-16 -4.33680868994202E-18 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784984" />
+      <inertia
+        ixx="9.9675895718047E-09"
+        ixy="3.6189151799195E-25"
+        ixz="-8.27180612553028E-25"
+        iyy="3.79225492600194E-08"
+        iyz="-2.68833699079734E-24"
+        izz="3.79225492600194E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_8.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_8.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_8"
+    type="continuous">
+    <origin
+      xyz="-0.098102 -0.038685 -0.036482"
+      rpy="1.6992 0.33779 -2.4208" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_8" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="Mecanum_Roller_Link_9">
+    <inertial>
+      <origin
+        xyz="-6.93889390390723E-16 0 -3.46944695195361E-18"
+        rpy="0 0 0" />
+      <mass
+        value="0.00104310145784987" />
+      <inertia
+        ixx="9.96758957238194E-09"
+        ixy="2.84343335565103E-24"
+        ixz="6.82424005356248E-24"
+        iyy="3.7922549260308E-08"
+        iyz="-8.27180612553028E-25"
+        izz="3.7922549260308E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_9.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Mechanum - Left.URDF/meshes/Mecanum_Roller_Link_9.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Mecanum_Roller_9"
+    type="continuous">
+    <origin
+      xyz="-0.1091 -0.040725 -0.032714"
+      rpy="1.9934 0.51534 -2.9227" />
+    <parent
+      link="base_link" />
+    <child
+      link="Mecanum_Roller_Link_9" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+</robot>
