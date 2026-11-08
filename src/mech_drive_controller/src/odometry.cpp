@@ -96,13 +96,13 @@ bool Odometry::update(double front_left_pos, double front_right_pos, double back
   timestamp_ = time;
 
   // Estimate speeds using a rolling mean to filter them out outliers:
-  linear_accumulator_x.accumulate(linear_x); 
+  linear_accumulator_x.accumulate(linear_x / dt); 
   linear_x_ = linear_accumulator_x.getRollingMean();
 
-  linear_accumulator_y.accumulate(linear_y);
+  linear_accumulator_y.accumulate(linear_y / dt);
   linear_y_ = linear_accumulator_y.getRollingMean();
   
-  angular_accumulator_.accumulate(angular);
+  angular_accumulator_.accumulate(angular / dt);
   angular_ = angular_accumulator_.getRollingMean();
   return true;
 }
