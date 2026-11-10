@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+    <!--constants to use for the robot dimensions-->
+    <xacro:property name="chassis_length" value = ".194"/>
+    <xacro:property name="chassis_width" value = ".17"/>
+    <xacro:property name="chassis_height" value = ".16"/>
+    <xacro:property name="chassis_mass" value = "1"/>
+
+    <xacro:property name="wheel_radius" value = ".024"/>
+    <xacro:property name="wheel_width" value = ".03"/>
+    <xacro:property name="wheel_zoff" value = ".07"/>
+    <xacro:property name="wheel_ygap" value = ".018"/>
+    <xacro:property name="wheel_xoff" value = ".1015"/>
+    <xacro:property name="wheel_mass" value = "1"/>
+
+    <xacro:property name="support_height" value = ".203"/>
+    <xacro:property name="support_radius" value = ".203"/>
+
+    <xacro:property name="lidar_radius" value=".03"/>
+
+
+    <!--constants to used for the robot sim colours-->
+    <material name="white">
+        <color rgba="1 1 1 1" />
+    </material>
+
+    <material name="orange">
+        <color rgba="1 0.3 0.1 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0.2 0.2 1 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+
+</robot>

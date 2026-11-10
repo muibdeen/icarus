@@ -1,0 +1,9 @@
+<library path="icarus_interface">
+  <class name="icarus_interface/IcarusInterface"
+         type="IcarusInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware Interface for Mecanum Drive rPi controller.
+    </description>
+  </class>
+</library>
