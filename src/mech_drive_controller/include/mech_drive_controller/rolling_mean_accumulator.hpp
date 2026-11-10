@@ -20,6 +20,7 @@
 #define MECH_DRIVE_CONTROLLER__ROLLING_MEAN_ACCUMULATOR_HPP_
 
 #include <cassert>
+#include <cstddef>
 #include <vector>
 
 namespace mech_drive_controller
@@ -34,7 +35,7 @@ template <typename T>
 class RollingMeanAccumulator
 {
 public:
-  explicit RollingMeanAccumulator(size_t rolling_window_size)
+  explicit RollingMeanAccumulator(std::size_t rolling_window_size)
   : buffer_(rolling_window_size, 0.0), next_insert_(0), sum_(0.0), buffer_filled_(false)
   {
   }
@@ -51,14 +52,14 @@ public:
 
   T getRollingMean() const
   {
-    size_t valid_data_count = buffer_filled_ * buffer_.size() + !buffer_filled_ * next_insert_;
+    std::size_t valid_data_count = buffer_filled_ * buffer_.size() + !buffer_filled_ * next_insert_;
     assert(valid_data_count > 0);
     return sum_ / valid_data_count;
   }
 
 private:
   std::vector<T> buffer_;
-  size_t next_insert_;
+  std::size_t next_insert_;
   T sum_;
   bool buffer_filled_;
 };

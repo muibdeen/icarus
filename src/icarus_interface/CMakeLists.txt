@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(icarus_interface)
 
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
-
-# Default to C++14
+# Default to C++17 (Jazzy requires C++17)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -23,13 +20,13 @@ find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(control_toolbox REQUIRED)
 find_package(pid_messages REQUIRED)
-
+find_package(rclcpp_lifecycle REQUIRED)
 
 
 add_library(icarus_interface SHARED
 src/encoder_control.cpp
-src/Icarus_HW_Interface.cpp 
-src/motor_control.cpp 
+src/Icarus_HW_Interface.cpp
+src/motor_control.cpp
 src/rotary_encoder.cpp
 src/wheel.cpp)
 
@@ -48,6 +45,7 @@ ament_target_dependencies(
   pluginlib
   control_toolbox
   pid_messages
+  rclcpp_lifecycle
 )
 
 pluginlib_export_plugin_description_file(hardware_interface robot_hardware.xml)

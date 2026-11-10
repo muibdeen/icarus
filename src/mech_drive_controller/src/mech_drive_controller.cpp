@@ -48,15 +48,8 @@ using lifecycle_msgs::msg::State;
 
 MechDriveController::MechDriveController() : controller_interface::ControllerInterface() {}
 
-controller_interface::return_type MechDriveController::init(const std::string & controller_name)
+controller_interface::CallbackReturn MechDriveController::on_init()
 {
-  // initialize lifecycle node
-  auto ret = ControllerInterface::init(controller_name);
-  if (ret != controller_interface::return_type::OK)
-  {
-    return ret;
-  }
-
   try
   {
     // with the lifecycle node being initialized, we can declare parameters that are called out in the yaml
@@ -68,7 +61,7 @@ controller_interface::return_type MechDriveController::init(const std::string & 
     auto_declare<double>("wheel_separation_width", wheel_params_.separation_width);
     auto_declare<double>("wheel_separation_length", wheel_params_.separation_length);
 
-    auto_declare<int>("wheels_per_side", wheel_params_.wheels_per_side);
+    auto_declare<int>("wheels_per_side", static_cast<int>(wheel_params_.wheels_per_side));
     auto_declare<double>("wheel_radius", wheel_params_.radius);
 
     auto_declare<std::string>("odom_frame_id", odom_params_.odom_frame_id);
@@ -88,10 +81,10 @@ controller_interface::return_type MechDriveController::init(const std::string & 
   catch (const std::exception & e)
   {
     fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
-    return controller_interface::return_type::ERROR;
+    return controller_interface::CallbackReturn::ERROR;
   }
 
-  return controller_interface::return_type::OK;
+  return controller_interface::CallbackReturn::SUCCESS;
 }
 
 InterfaceConfiguration MechDriveController::command_interface_configuration() const
@@ -142,10 +135,13 @@ InterfaceConfiguration MechDriveController::state_interface_configuration() cons
   return {interface_configuration_type::INDIVIDUAL, conf_names};
 }
 
-controller_interface::return_type MechDriveController::update()
+controller_interface::return_type MechDriveController::update(
+  const rclcpp::Time & time, const rclcpp::Duration & period)
 {
-  auto logger = node_->get_logger();
-  if (get_current_state().id() == State::PRIMARY_STATE_INACTIVE)
+  (void)period;
+  auto node = get_node();
+  auto logger = node->get_logger();
+  if (get_lifecycle_state().id() == State::PRIMARY_STATE_INACTIVE)
   {
     if (!is_halted)
     {
@@ -155,7 +151,7 @@ controller_interface::return_type MechDriveController::update()
     return controller_interface::return_type::OK;
   }
 
-  const auto current_time = node_->get_clock()->now();
+  const auto current_time = time;
 
   std::shared_ptr<Twist> last_msg;
   received_velocity_msg_ptr_.get(last_msg);
@@ -255,6 +251,7 @@ controller_interface::return_type MechDriveController::update()
 
   const auto update_dt = current_time - previous_update_timestamp_;
   previous_update_timestamp_ = current_time;
+  (void)update_dt;
 
   previous_commands_.pop();
   previous_commands_.emplace(command);
@@ -288,15 +285,17 @@ controller_interface::return_type MechDriveController::update()
   return controller_interface::return_type::OK;
 }
 
-CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State & previous_state)
 {
-  auto logger = node_->get_logger();
+  (void)previous_state;
+  auto node = get_node();
+  auto logger = node->get_logger();
 
   // update parameters
-  back_left_wheel_name = node_->get_parameter("back_left_wheel_name").as_string_array();
-  back_right_wheel_name = node_->get_parameter("back_right_wheel_name").as_string_array();
-  front_left_wheel_name = node_->get_parameter("front_left_wheel_name").as_string_array();
-  front_right_wheel_name = node_->get_parameter("front_right_wheel_name").as_string_array();
+  back_left_wheel_name = node->get_parameter("back_left_wheel_name").as_string_array();
+  back_right_wheel_name = node->get_parameter("back_right_wheel_name").as_string_array();
+  front_left_wheel_name = node->get_parameter("front_left_wheel_name").as_string_array();
+  front_right_wheel_name = node->get_parameter("front_right_wheel_name").as_string_array();
 
   //confirm that amount of wheels on both sides are equal
   if (back_left_wheel_name.size() + front_left_wheel_name.size()  != front_right_wheel_name.size() + back_right_wheel_name.size())
@@ -313,10 +312,10 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
     return CallbackReturn::ERROR;
   }
   //wheel parameters are taken from the my controller config file within this node package
-  wheel_params_.separation_length = node_->get_parameter("wheel_separation_length").as_double();
-  wheel_params_.separation_width = node_->get_parameter("wheel_separation_width").as_double();
-  wheel_params_.wheels_per_side = static_cast<size_t>(node_->get_parameter("wheels_per_side").as_int());
-  wheel_params_.radius = node_->get_parameter("wheel_radius").as_double();
+  wheel_params_.separation_length = node->get_parameter("wheel_separation_length").as_double();
+  wheel_params_.separation_width = node->get_parameter("wheel_separation_width").as_double();
+  wheel_params_.wheels_per_side = static_cast<size_t>(node->get_parameter("wheels_per_side").as_int());
+  wheel_params_.radius = node->get_parameter("wheel_radius").as_double();
 
   //apply wheel params from my_controller.yaml
   const auto wheels = wheel_params_;
@@ -326,26 +325,26 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   const double right_wheel_radius = wheels.radius;
 
   odometry_.setWheelParams(wheel_separation_length, wheel_separation_width, left_wheel_radius, right_wheel_radius);
-  odometry_.setVelocityRollingWindowSize(node_->get_parameter("velocity_rolling_window_size").as_int());
+  odometry_.setVelocityRollingWindowSize(node->get_parameter("velocity_rolling_window_size").as_int());
 
-  odom_params_.odom_frame_id = node_->get_parameter("odom_frame_id").as_string();
-  odom_params_.base_frame_id = node_->get_parameter("base_frame_id").as_string();
+  odom_params_.odom_frame_id = node->get_parameter("odom_frame_id").as_string();
+  odom_params_.base_frame_id = node->get_parameter("base_frame_id").as_string();
 
-  auto pose_diagonal = node_->get_parameter("pose_covariance_diagonal").as_double_array();
+  auto pose_diagonal = node->get_parameter("pose_covariance_diagonal").as_double_array();
   std::copy(
     pose_diagonal.begin(), pose_diagonal.end(), odom_params_.pose_covariance_diagonal.begin());
 
-  auto twist_diagonal = node_->get_parameter("twist_covariance_diagonal").as_double_array();
+  auto twist_diagonal = node->get_parameter("twist_covariance_diagonal").as_double_array();
   std::copy(
     twist_diagonal.begin(), twist_diagonal.end(), odom_params_.twist_covariance_diagonal.begin());
 
-  odom_params_.open_loop = node_->get_parameter("open_loop").as_bool();
-  odom_params_.enable_odom_tf = node_->get_parameter("enable_odom_tf").as_bool();
+  odom_params_.open_loop = node->get_parameter("open_loop").as_bool();
+  odom_params_.enable_odom_tf = node->get_parameter("enable_odom_tf").as_bool();
 
   cmd_vel_timeout_ = std::chrono::milliseconds{
-    static_cast<int>(node_->get_parameter("cmd_vel_timeout").as_double() * 1000.0)};
-  publish_limited_velocity_ = node_->get_parameter("publish_limited_velocity").as_bool();
-  use_stamped_vel_ = node_->get_parameter("use_stamped_vel").as_bool();
+    static_cast<int>(node->get_parameter("cmd_vel_timeout").as_double() * 1000.0)};
+  publish_limited_velocity_ = node->get_parameter("publish_limited_velocity").as_bool();
+  use_stamped_vel_ = node->get_parameter("use_stamped_vel").as_bool();
 
 
   if (!reset())
@@ -354,11 +353,11 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   }
 
   //set the amount of expected wheels per side for the robot
-  wheel_params_.wheels_per_side = node_->get_parameter("wheels_per_side").as_int();
+  wheel_params_.wheels_per_side = node->get_parameter("wheels_per_side").as_int();
 
   if (publish_limited_velocity_)
   {
-    limited_velocity_publisher_ = node_->create_publisher<Twist>(DEFAULT_COMMAND_OUT_TOPIC, rclcpp::SystemDefaultsQoS());
+    limited_velocity_publisher_ = node->create_publisher<Twist>(DEFAULT_COMMAND_OUT_TOPIC, rclcpp::SystemDefaultsQoS());
     realtime_limited_velocity_publisher_ = std::make_shared<realtime_tools::RealtimePublisher<Twist>>(limited_velocity_publisher_);
   }
 
@@ -372,33 +371,36 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   // initialize command subscriber
   if (use_stamped_vel_)
   {
-    velocity_command_subscriber_ = node_->create_subscription<Twist>(
+    velocity_command_subscriber_ = node->create_subscription<Twist>(
       DEFAULT_COMMAND_TOPIC, rclcpp::SystemDefaultsQoS(),
       [this](const std::shared_ptr<Twist> msg) -> void {
+        auto node = get_node();
         if (!subscriber_is_active_)
         {
-          RCLCPP_WARN(node_->get_logger(), "Can't accept new commands. subscriber is inactive");
+          RCLCPP_WARN(node->get_logger(), "Can't accept new commands. subscriber is inactive");
           return;
         }
         if ((msg->header.stamp.sec == 0) && (msg->header.stamp.nanosec == 0))
         {
           RCLCPP_WARN_ONCE(
-            node_->get_logger(),
+            node->get_logger(),
             "Received TwistStamped with zero timestamp, setting it to current "
             "time, this message will only be shown once");
-          msg->header.stamp = node_->get_clock()->now();
+          msg->header.stamp = node->get_clock()->now();
         }
         received_velocity_msg_ptr_.set(std::move(msg));
       });
   }
   else
   {
-    velocity_command_unstamped_subscriber_ = node_->create_subscription<geometry_msgs::msg::Twist>(
+    velocity_command_unstamped_subscriber_ = node->create_subscription<geometry_msgs::msg::Twist>(
       DEFAULT_COMMAND_UNSTAMPED_TOPIC, rclcpp::SystemDefaultsQoS(),
       [this](const std::shared_ptr<geometry_msgs::msg::Twist> msg) -> void {
+        auto node = get_node();
+        (void)node;
         if (!subscriber_is_active_)
         {
-          RCLCPP_WARN(node_->get_logger(), "Can't accept new commands. subscriber is inactive");
+          RCLCPP_WARN(node->get_logger(), "Can't accept new commands. subscriber is inactive");
           return;
         }
 
@@ -406,12 +408,12 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
         std::shared_ptr<Twist> twist_stamped;
         received_velocity_msg_ptr_.get(twist_stamped);
         twist_stamped->twist = *msg;
-        twist_stamped->header.stamp = node_->get_clock()->now();
+        twist_stamped->header.stamp = node->get_clock()->now();
       });
   }
 
   // initialize odometry publisher and messasge
-  odometry_publisher_ = node_->create_publisher<nav_msgs::msg::Odometry>(
+  odometry_publisher_ = node->create_publisher<nav_msgs::msg::Odometry>(
     DEFAULT_ODOMETRY_TOPIC, rclcpp::SystemDefaultsQoS());
   realtime_odometry_publisher_ =
     std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(
@@ -422,9 +424,9 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   odometry_message.child_frame_id = odom_params_.base_frame_id;
 
   // limit the publication on the topics /odom and /tf
-  publish_rate_ = node_->get_parameter("publish_rate").as_double();
+  publish_rate_ = node->get_parameter("publish_rate").as_double();
   publish_period_ = rclcpp::Duration::from_seconds(1.0 / publish_rate_);
-  previous_publish_timestamp_ = node_->get_clock()->now();
+  previous_publish_timestamp_ = node->get_clock()->now();
 
   // initialize odom values zeros
   odometry_message.twist =
@@ -441,7 +443,7 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   }
 
   // initialize transform publisher and message
-  odometry_transform_publisher_ = node_->create_publisher<tf2_msgs::msg::TFMessage>(
+  odometry_transform_publisher_ = node->create_publisher<tf2_msgs::msg::TFMessage>(
     DEFAULT_TRANSFORM_TOPIC, rclcpp::SystemDefaultsQoS());
   realtime_odometry_transform_publisher_ =
     std::make_shared<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>(
@@ -453,13 +455,15 @@ CallbackReturn MechDriveController::on_configure(const rclcpp_lifecycle::State &
   odometry_transform_message.transforms.front().header.frame_id = odom_params_.odom_frame_id;
   odometry_transform_message.transforms.front().child_frame_id = odom_params_.base_frame_id;
 
-  previous_update_timestamp_ = node_->get_clock()->now();
+  previous_update_timestamp_ = node->get_clock()->now();
   return CallbackReturn::SUCCESS;
 }
 
 //set the wheel joints upon node activation
-CallbackReturn MechDriveController::on_activate(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_activate(const rclcpp_lifecycle::State & previous_state)
 {
+  (void)previous_state;
+  auto node = get_node();
   const auto front_left_result = configure_side("front_left", front_left_wheel_name, registered_front_left_wheel_handle_);
   const auto front_right_result = configure_side("front_right", front_right_wheel_name, registered_front_right_wheel_handle_);
   const auto back_left_result = configure_side("back_left", back_left_wheel_name, registered_back_left_wheel_handle_);
@@ -472,25 +476,27 @@ CallbackReturn MechDriveController::on_activate(const rclcpp_lifecycle::State &)
 
   if (registered_front_left_wheel_handle_.empty() || registered_front_right_wheel_handle_.empty() || registered_back_left_wheel_handle_.empty() || registered_back_right_wheel_handle_.empty())
   {
-    RCLCPP_ERROR(node_->get_logger(), "Either left wheel interfaces, right wheel interfaces are non existent");
+    RCLCPP_ERROR(node->get_logger(), "Either left wheel interfaces, right wheel interfaces are non existent");
     return CallbackReturn::ERROR;
   }
 
   is_halted = false;
   subscriber_is_active_ = true;
 
-  RCLCPP_DEBUG(node_->get_logger(), "Subscriber and publisher are now active.");
+  RCLCPP_DEBUG(node->get_logger(), "Subscriber and publisher are now active.");
   return CallbackReturn::SUCCESS;
 }
 
-CallbackReturn MechDriveController::on_deactivate(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_deactivate(const rclcpp_lifecycle::State & previous_state)
 {
+  (void)previous_state;
   subscriber_is_active_ = false;
   return CallbackReturn::SUCCESS;
 }
 
-CallbackReturn MechDriveController::on_cleanup(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_cleanup(const rclcpp_lifecycle::State & previous_state)
 {
+  (void)previous_state;
   if (!reset())
   {
     return CallbackReturn::ERROR;
@@ -500,8 +506,9 @@ CallbackReturn MechDriveController::on_cleanup(const rclcpp_lifecycle::State &)
   return CallbackReturn::SUCCESS;
 }
 
-CallbackReturn MechDriveController::on_error(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_error(const rclcpp_lifecycle::State & previous_state)
 {
+  (void)previous_state;
   if (!reset())
   {
     return CallbackReturn::ERROR;
@@ -531,8 +538,9 @@ bool MechDriveController::reset()
   return true;
 }
 
-CallbackReturn MechDriveController::on_shutdown(const rclcpp_lifecycle::State &)
+CallbackReturn MechDriveController::on_shutdown(const rclcpp_lifecycle::State & previous_state)
 {
+  (void)previous_state;
   return CallbackReturn::SUCCESS;
 }
 
@@ -553,7 +561,8 @@ void MechDriveController::halt()
 
 CallbackReturn MechDriveController::configure_side(const std::string & side, const std::vector<std::string> & wheel_name,std::vector<WheelHandle> & registered_handles)
 {
-  auto logger = node_->get_logger();
+  auto node = get_node();
+  auto logger = node->get_logger();
 
   if (wheel_name.empty())
   {
@@ -567,7 +576,7 @@ CallbackReturn MechDriveController::configure_side(const std::string & side, con
   {
     const auto state_handle = std::find_if(
       state_interfaces_.cbegin(), state_interfaces_.cend(), [&wheel_name](const auto & interface) {
-        return interface.get_name() == wheel_name &&
+        return interface.get_prefix_name() == wheel_name &&
                interface.get_interface_name() == HW_IF_POSITION;
       });
 
@@ -580,7 +589,7 @@ CallbackReturn MechDriveController::configure_side(const std::string & side, con
     const auto command_handle = std::find_if(
       command_interfaces_.begin(), command_interfaces_.end(),
       [&wheel_name](const auto & interface) {
-        return interface.get_name() == wheel_name &&
+        return interface.get_prefix_name() == wheel_name &&
                interface.get_interface_name() == HW_IF_VELOCITY;
       });
 

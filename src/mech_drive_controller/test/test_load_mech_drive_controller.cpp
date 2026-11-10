@@ -26,9 +26,12 @@ TEST(TestLoadMechDriveController, load_controller)
   std::shared_ptr<rclcpp::Executor> executor =
     std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
+  auto clock = std::make_shared<rclcpp::Clock>();
+  auto logger = rclcpp::get_logger("test");
+
   controller_manager::ControllerManager cm(
     std::make_unique<hardware_interface::ResourceManager>(
-      mech_drive_controller_testing::diffbot_urdf),
+      mech_drive_controller_testing::diffbot_urdf, clock, logger),
     executor, "test_controller_manager");
 
   ASSERT_NO_THROW(

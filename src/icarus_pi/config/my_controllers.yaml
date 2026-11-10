@@ -1,11 +1,11 @@
 controller_manager:
   ros__parameters:
-    update_rate: 15
-    #use_sim_time: true
+    update_rate: 50
+    use_sim_time: true
 
     mech_cont:
       type: mech_drive_controller/MechDriveController
-    
+
     joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -22,28 +22,19 @@ mech_cont:
     back_right_wheel_name: ["backRight_joint"]
     wheel_separation_width: 0.21
     wheel_separation_length: 0.1665
-    wheel_radius: .024
-    
+    wheel_radius: 0.024
 
     use_stamped_vel: false
-
-
-    joint_state:
-      front_left_wheel:
-        topic: "/frontLeft_joint" # Adjust topic names as per your actual topics
-        ignore_timestamp: true
-      front_right_wheel:
-        topic: "/frontRight_joint" # Adjust topic names as per your actual topics
-        ignore_timestamp: true
-      back_left_wheel:
-        topic: "/backLeft_joint" # Adjust topic names as per your actual topics
-        ignore_timestamp: true
-      back_right_wheel:
-        topic: "/backRight_joint" # Adjust topic names as per your actual topics
-        ignore_timestamp: true
+    open_loop: false
+    enable_odom_tf: true
+    pose_covariance_diagonal: [0.001, 0.001, 1e6, 1e6, 1e6, 0.001]
+    twist_covariance_diagonal: [0.001, 0.001, 1e6, 1e6, 1e6, 0.001]
+    cmd_vel_timeout: 0.5
+    velocity_rolling_window_size: 20
 
 
 joint_broad:
   ros__parameters:
-    update_rate: 30
+    update_rate: 50
     joints: ["frontLeft_joint", "backLeft_joint", "frontRight_joint", "backRight_joint"]
+    interfaces: ["position", "velocity"]

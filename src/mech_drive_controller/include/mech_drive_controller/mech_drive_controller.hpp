@@ -34,7 +34,6 @@
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "hardware_interface/handle.hpp"
 #include "nav_msgs/msg/odometry.hpp"
-#include "odometry.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "realtime_tools/realtime_box.h"
@@ -55,7 +54,7 @@ public:
   MechDriveController();
 
   MECH_DRIVE_CONTROLLER_PUBLIC
-  controller_interface::return_type init(const std::string & controller_name) override;
+  controller_interface::CallbackReturn on_init() override;
 
   MECH_DRIVE_CONTROLLER_PUBLIC
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
@@ -64,7 +63,8 @@ public:
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
   MECH_DRIVE_CONTROLLER_PUBLIC
-  controller_interface::return_type update() override;
+  controller_interface::return_type update(
+    const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
   MECH_DRIVE_CONTROLLER_PUBLIC
   CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state) override;

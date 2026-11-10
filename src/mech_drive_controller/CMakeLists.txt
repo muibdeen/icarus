@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(mech_drive_controller)
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 find_package(ament_cmake REQUIRED)
@@ -21,6 +21,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(realtime_tools REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_msgs REQUIRED)
+find_package(rcpputils REQUIRED)
 
 add_library(mech_drive_controller SHARED
   src/mech_drive_controller.cpp
@@ -41,6 +42,7 @@ ament_target_dependencies(mech_drive_controller
   realtime_tools
   tf2
   tf2_msgs
+  rcpputils
 )
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
@@ -60,13 +62,14 @@ install(TARGETS mech_drive_controller
 )
 
 install(
-	DIRECTORY src
-	DESTINATION share/${PROJECT_NAME}
+  DIRECTORY src
+  DESTINATION share/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
-find_package(controller_manager REQUIRED)
+  find_package(controller_manager REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
 
   ament_add_gmock(test_mech_drive_controller
     test/test_mech_drive_controller.cpp
@@ -105,6 +108,7 @@ find_package(controller_manager REQUIRED)
   target_include_directories(test_accumulator PRIVATE include)
   ament_target_dependencies(test_accumulator)
 
+  ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_export_dependencies(
@@ -115,6 +119,7 @@ ament_export_dependencies(
   rclcpp_lifecycle
   tf2
   tf2_msgs
+  rcpputils
 )
 ament_export_include_directories(
   include

@@ -179,7 +179,9 @@ protected:
 
 TEST_F(TestMechDriveController, configure_fails_without_parameters)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   ASSERT_EQ(controller_->on_configure(rclcpp_lifecycle::State()), CallbackReturn::ERROR);
@@ -187,7 +189,9 @@ TEST_F(TestMechDriveController, configure_fails_without_parameters)
 
 TEST_F(TestMechDriveController, configure_fails_with_only_left_or_only_right_side_defined)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -213,7 +217,9 @@ TEST_F(TestMechDriveController, configure_fails_with_only_left_or_only_right_sid
 
 TEST_F(TestMechDriveController, configure_fails_with_mismatching_wheel_side_size)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -229,7 +235,9 @@ TEST_F(TestMechDriveController, configure_fails_with_mismatching_wheel_side_size
 
 TEST_F(TestMechDriveController, configure_succeeds_when_wheels_are_specified)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -258,7 +266,9 @@ TEST_F(TestMechDriveController, configure_succeeds_when_wheels_are_specified)
 
 TEST_F(TestMechDriveController, activate_fails_without_resources_assigned)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -275,7 +285,9 @@ TEST_F(TestMechDriveController, activate_fails_without_resources_assigned)
 
 TEST_F(TestMechDriveController, activate_succeeds_with_resources_assigned)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -293,7 +305,9 @@ TEST_F(TestMechDriveController, activate_succeeds_with_resources_assigned)
 
 TEST_F(TestMechDriveController, cleanup)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -309,11 +323,11 @@ TEST_F(TestMechDriveController, cleanup)
 
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(controller_->get_node()->get_node_base_interface());
-  auto state = controller_->configure();
+  controller_->on_configure(rclcpp_lifecycle::State()); auto state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_INACTIVE, state.id());
   assignResources();
 
-  state = controller_->activate();
+  controller_->on_activate(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_ACTIVE, state.id());
 
   waitForSetup();
@@ -324,13 +338,13 @@ TEST_F(TestMechDriveController, cleanup)
   publish(linear, angular);
   controller_->wait_for_twist(executor);
 
-  ASSERT_EQ(controller_->update(), controller_interface::return_type::OK);
+  ASSERT_EQ(controller_->update(rclcpp::Time(), rclcpp::Duration::from_seconds(0.01)), controller_interface::return_type::OK);
 
-  state = controller_->deactivate();
+  controller_->on_deactivate(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_INACTIVE, state.id());
-  ASSERT_EQ(controller_->update(), controller_interface::return_type::OK);
+  ASSERT_EQ(controller_->update(rclcpp::Time(), rclcpp::Duration::from_seconds(0.01)), controller_interface::return_type::OK);
 
-  state = controller_->cleanup();
+  controller_->on_cleanup(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_UNCONFIGURED, state.id());
 
   // should be stopped
@@ -344,7 +358,9 @@ TEST_F(TestMechDriveController, cleanup)
 
 TEST_F(TestMechDriveController, correct_initialization_using_parameters)
 {
-  const auto ret = controller_->init(controller_name);
+  controller_interface::ControllerInterfaceParams params;
+  params.controller_name = controller_name;
+  const auto ret = controller_->init(params);
   ASSERT_EQ(ret, controller_interface::return_type::OK);
 
   controller_->get_node()->set_parameter(
@@ -361,7 +377,7 @@ TEST_F(TestMechDriveController, correct_initialization_using_parameters)
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(controller_->get_node()->get_node_base_interface());
 
-  auto state = controller_->configure();
+  controller_->on_configure(rclcpp_lifecycle::State()); auto state = controller_->get_lifecycle_state();
   assignResources();
 
   ASSERT_EQ(State::PRIMARY_STATE_INACTIVE, state.id());
@@ -369,7 +385,7 @@ TEST_F(TestMechDriveController, correct_initialization_using_parameters)
   EXPECT_EQ(0.02, front_right_wheel_vel_cmd_.get_value());
   EXPECT_EQ(0.01, back_left_wheel_vel_cmd_.get_value());
   EXPECT_EQ(0.02, back_right_wheel_vel_cmd_.get_value());
-  state = controller_->activate();
+  controller_->on_activate(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_ACTIVE, state.id());
 
   // send msg
@@ -379,7 +395,7 @@ TEST_F(TestMechDriveController, correct_initialization_using_parameters)
   // wait for msg is be published to the system
   ASSERT_TRUE(controller_->wait_for_twist(executor));
 
-  ASSERT_EQ(controller_->update(), controller_interface::return_type::OK);
+  ASSERT_EQ(controller_->update(rclcpp::Time(), rclcpp::Duration::from_seconds(0.01)), controller_interface::return_type::OK);
   EXPECT_EQ(1.0, front_left_wheel_vel_cmd_.get_value());
   EXPECT_EQ(1.0, front_right_wheel_vel_cmd_.get_value());
   EXPECT_EQ(1.0, back_left_wheel_vel_cmd_.get_value());
@@ -387,9 +403,9 @@ TEST_F(TestMechDriveController, correct_initialization_using_parameters)
   // deactivated
   // wait so controller process the second point when deactivated
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  state = controller_->deactivate();
+  controller_->on_deactivate(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(state.id(), State::PRIMARY_STATE_INACTIVE);
-  ASSERT_EQ(controller_->update(), controller_interface::return_type::OK);
+  ASSERT_EQ(controller_->update(rclcpp::Time(), rclcpp::Duration::from_seconds(0.01)), controller_interface::return_type::OK);
 
   EXPECT_EQ(0.0, front_left_wheel_vel_cmd_.get_value()) << "Wheels are halted on deactivate()";
   EXPECT_EQ(0.0, front_right_wheel_vel_cmd_.get_value()) << "Wheels are halted on deactivate()";
@@ -397,7 +413,7 @@ TEST_F(TestMechDriveController, correct_initialization_using_parameters)
   EXPECT_EQ(0.0, back_right_wheel_vel_cmd_.get_value()) << "Wheels are halted on deactivate()";
 
   // cleanup
-  state = controller_->cleanup();
+  controller_->on_cleanup(rclcpp_lifecycle::State()); state = controller_->get_lifecycle_state();
   ASSERT_EQ(State::PRIMARY_STATE_UNCONFIGURED, state.id());
   EXPECT_EQ(0.0, front_left_wheel_vel_cmd_.get_value());
   EXPECT_EQ(0.0, front_right_wheel_vel_cmd_.get_value());

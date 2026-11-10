@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
    <gazebo>
-      <plugin name="planar_controller" filename="libgazebo_ros_planar_move.so">
+      <plugin name="planar_controller" filename="libgz_ros2_control-system.so">
             <command_topic>cmd_vel</command_topic>
             <odometry_frame>odom</odometry_frame>
             <odometry_rate>50.0</odometry_rate>
